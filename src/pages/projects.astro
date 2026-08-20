@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import EmptyState from "../components/EmptyState.astro";
+import { projects } from "../data/projects";
+---
+
+<BaseLayout
+  title="Projects | Pratheek Prakash Shetty"
+  description="Systems and research engineering projects by Pratheek Prakash Shetty."
+>
+  <div class="wrap page-shell">
+    <header class="page-intro">
+      <p class="section-eyebrow">Projects</p>
+      <h1>Systems, algorithms & tools</h1>
+      <p>Technical projects emphasizing the problem, engineering contribution, and supporting code or research artifacts.</p>
+    </header>
+
+    <section class="page-section first" aria-labelledby="all-projects-title">
+      <SectionHeading title="All projects" />
+      {projects.length > 0 ? (
+        <div class="project-grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
+      ) : (
+        <EmptyState title="Verified project details pending" message="Add project descriptions, technologies, dates, and links in src/data/projects.ts. Empty image boxes are never rendered." />
+      )}
+    </section>
+  </div>
+</BaseLayout>

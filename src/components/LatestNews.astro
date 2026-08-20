@@ -1,0 +1,61 @@
+---
+import { latestNews } from "../data/news";
+import { withBase } from "../data/site";
+
+const visibleNews = latestNews.slice(0, 5);
+const formatDate = (date: string) => {
+  if (/^\d{4}$/.test(date)) return date;
+  const normalizedDate = date.length === 7 ? `${date}-01` : date;
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  }).format(new Date(`${normalizedDate}T00:00:00Z`));
+};
+const isExternal = (url: string) => /^https?:/.test(url);
+---
+
+<section class="news-section" aria-labelledby="latest-news-title">
+  <header class="news-heading">
+    <div>
+      <p class="section-eyebrow">Now</p>
+      <h2 id="latest-news-title">Latest news</h2>
+    </div>
+    <p>Recent research, project, and professional updates.</p>
+  </header>
+
+  {
+    visibleNews.length > 0 ? (
+      <ol class="news-list">
+        {visibleNews.map((item, index) => {
+          const external = item.url ? isExternal(item.url) : false;
+          const href = item.url ? (external ? item.url : withBase(item.url)) : undefined;
+          return (
+            <li>
+              <time datetime={item.date}>{formatDate(item.date)}</time>
+              <div>
+                <p class="news-meta">
+                  <span>{item.category}</span>
+                  {index === 0 && <strong>Latest</strong>}
+                </p>
+                <h3>
+                  {href ? (
+                    <a href={href} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
+                      {item.title}{external && <span aria-hidden="true"> ↗</span>}
+                    </a>
+                  ) : item.title}
+                </h3>
+                {item.description && <p>{item.description}</p>}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    ) : (
+      <div class="news-empty">
+        <p><strong>No updates posted yet.</strong> Verified research and project milestones will appear here.</p>
+        <p class="todo-note">Add a standalone item in <code>src/data/news.ts</code>, or add <code>latestUpdate</code> to a research or project entry.</p>
+      </div>
+    )
+  }
+</section>

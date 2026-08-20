@@ -1,0 +1,37 @@
+---
+import { site, withBase } from "../data/site";
+import SocialLinks from "./SocialLinks.astro";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="hero-eyebrow">{site.eyebrow}</p>
+    <h1 id="hero-title">{site.name}</h1>
+    <p class="hero-focus">{site.focusLine}</p>
+    <p class="hero-intro">{site.introduction}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={withBase("/resumes/")}>CV / Resumes <span aria-hidden="true">→</span></a>
+      <SocialLinks />
+    </div>
+  </div>
+
+  <div class="hero-portrait-wrap">
+    {
+      site.headshot.src ? (
+        <img
+          class="hero-portrait"
+          src={withBase(site.headshot.src)}
+          alt={site.headshot.alt}
+          width="400"
+          height="400"
+          loading="eager"
+          decoding="async"
+        />
+      ) : (
+        <div class="hero-portrait hero-portrait-placeholder" role="img" aria-label="Headshot placeholder">
+          <span>{site.headshot.initials}</span>
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,26 @@
+---
+import type { ExperienceEntry } from "../data/types";
+
+interface Props {
+  entry: ExperienceEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="experience-item">
+  <div class="experience-dates">{entry.startDate} – {entry.endDate}</div>
+  <div>
+    <h3>{entry.role}</h3>
+    <p class="experience-organization">
+      {entry.url ? <a href={entry.url} target="_blank" rel="noreferrer">{entry.organization} ↗</a> : entry.organization}
+      {entry.location && <span> · {entry.location}</span>}
+    </p>
+    {entry.context && <p class="experience-context">{entry.context}</p>}
+    {entry.description.length > 0 && (
+      <ul class="detail-list">
+        {entry.description.map((item) => <li>{item}</li>)}
+      </ul>
+    )}
+  </div>
+</article>

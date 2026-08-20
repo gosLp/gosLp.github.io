@@ -1,0 +1,74 @@
+---
+import { navigation, site, withBase } from "../data/site";
+
+const base = import.meta.env.BASE_URL;
+const localPath = Astro.url.pathname.startsWith(base)
+  ? `/${Astro.url.pathname.slice(base.length)}`
+  : Astro.url.pathname;
+const isCurrent = (href: string) => {
+  const hrefPath = href.split("#")[0];
+  if (hrefPath === "/") return localPath === "/";
+  return localPath.startsWith(hrefPath);
+};
+const navItems = navigation.flatMap((item) =>
+  item.label === "Contact" && site.profiles.blog
+    ? [{ label: "Blog ↗", href: site.profiles.blog, external: true }, item]
+    : [item],
+);
+---
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="site-name" href={withBase("/")} aria-label={`${site.name}, home`}>
+      {site.shortName}
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <ul>
+        {
+          navItems.map((item) => {
+            const external = "external" in item && item.external;
+            return (
+              <li>
+                <a
+                  href={external ? item.href : withBase(item.href)}
+                  class:list={{ active: !external && isCurrent(item.href) }}
+                  aria-current={!external && isCurrent(item.href) ? "page" : undefined}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noreferrer" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <details class="mobile-nav">
+      <summary aria-label="Open navigation"><span>Menu</span></summary>
+      <nav aria-label="Mobile navigation">
+        <ul>
+          {
+            navItems.map((item) => {
+              const external = "external" in item && item.external;
+              return (
+                <li>
+                  <a
+                    href={external ? item.href : withBase(item.href)}
+                    aria-current={!external && isCurrent(item.href) ? "page" : undefined}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noreferrer" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>

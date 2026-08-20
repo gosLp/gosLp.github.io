@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import ResearchItem from "../components/ResearchItem.astro";
+import EmptyState from "../components/EmptyState.astro";
+import { research } from "../data/research";
+---
+
+<BaseLayout
+  title="Research | Pratheek Prakash Shetty"
+  description="Research by Pratheek Prakash Shetty in GPU systems, parallel algorithms, compiler and runtime systems, and high-performance computing."
+>
+  <div class="wrap page-shell">
+    <header class="page-intro">
+      <p class="section-eyebrow">Research</p>
+      <h1>Publications & research</h1>
+      <p>Research entries are organized by status and include supporting artifacts only when verified links are available.</p>
+    </header>
+
+    <section class="page-section first" aria-labelledby="all-research-title">
+      <SectionHeading title="All research" description="Published, accepted, workshop, preprint, under-review, and in-progress work remain explicitly distinguished." />
+      {research.length > 0 ? (
+        <div class="research-list">{research.map((entry) => <ResearchItem entry={entry} />)}</div>
+      ) : (
+        <EmptyState title="No unverified claims" message="This page is ready for verified entries. Add them in src/data/research.ts; no paper, venue, author, or year has been invented." />
+      )}
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,42 @@
+---
+import type { ResearchEntry } from "../data/types";
+
+interface Props {
+  entry: ResearchEntry;
+}
+
+const { entry } = Astro.props;
+const links = [
+  { label: "Paper", href: entry.paperUrl },
+  { label: "Code", href: entry.codeUrl },
+  { label: "Slides", href: entry.slidesUrl },
+  { label: "Poster", href: entry.posterUrl },
+  { label: "DOI", href: entry.doiUrl },
+].filter((link): link is { label: string; href: string } => Boolean(link.href));
+---
+
+<article class="research-item">
+  <header>
+    <div class="research-meta">
+      <span class:list={["status", `status-${entry.status.toLowerCase().replace(/\s/g, "-")}`]}>{entry.status}</span>
+      {(entry.venue || entry.location || entry.year) && (
+        <span>{[entry.venue, entry.location, entry.year].filter(Boolean).join(" · ")}</span>
+      )}
+    </div>
+    <h3>{entry.title}</h3>
+    {entry.authors.length > 0 && <p class="authors">{entry.authors.join(", ")}</p>}
+  </header>
+  <p>{entry.description}</p>
+  {entry.highlights && entry.highlights.length > 0 && (
+    <ul class="research-highlights">
+      {entry.highlights.map((highlight) => <li>{highlight}</li>)}
+    </ul>
+  )}
+  {links.length > 0 && (
+    <ul class="inline-links" aria-label={`Links for ${entry.title}`}>
+      {links.map((link) => (
+        <li><a href={link.href} target="_blank" rel="noreferrer">{link.label} <span aria-hidden="true">↗</span></a></li>
+      ))}
+    </ul>
+  )}
+</article>

@@ -1,0 +1,45 @@
+---
+import { site } from "../data/site";
+
+interface Props {
+  includeEmail?: boolean;
+  includeBlog?: boolean;
+}
+
+const { includeEmail = false, includeBlog = false } = Astro.props;
+const links = [
+  includeEmail && site.email
+    ? { label: "Email", href: `mailto:${site.email}`, external: false }
+    : null,
+  site.profiles.github
+    ? { label: "GitHub", href: site.profiles.github, external: true }
+    : null,
+  site.profiles.scholar
+    ? { label: "Google Scholar", href: site.profiles.scholar, external: true }
+    : null,
+  site.profiles.linkedin
+    ? { label: "LinkedIn", href: site.profiles.linkedin, external: true }
+    : null,
+  includeBlog && site.profiles.blog
+    ? { label: "Blog", href: site.profiles.blog, external: true }
+    : null,
+].filter(Boolean) as { label: string; href: string; external: boolean }[];
+---
+
+{
+  links.length > 0 && (
+    <ul class="social-links" aria-label="External profiles">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "me noreferrer" : undefined}
+          >
+            {link.label}{link.external && <span aria-hidden="true"> ↗</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

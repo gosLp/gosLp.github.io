@@ -1,0 +1,37 @@
+---
+import type { ProjectEntry } from "../data/types";
+
+interface Props {
+  project: ProjectEntry;
+}
+
+const { project } = Astro.props;
+const links = [
+  { label: "GitHub", href: project.githubUrl },
+  { label: "Project", href: project.projectUrl },
+  { label: "Paper", href: project.paperUrl },
+].filter((link): link is { label: string; href: string } => Boolean(link.href));
+---
+
+<article class="project-card">
+  {project.image && <img src={project.image} alt={project.imageAlt ?? ""} loading="lazy" />}
+  <div class="project-body">
+    <div class="project-heading">
+      <h3>{project.title}</h3>
+      {project.year && <span>{project.year}</span>}
+    </div>
+    <p>{project.longDescription ?? project.description}</p>
+    {project.technologies.length > 0 && (
+      <ul class="tags" aria-label="Technologies">
+        {project.technologies.map((technology) => <li>{technology}</li>)}
+      </ul>
+    )}
+    {links.length > 0 && (
+      <ul class="inline-links" aria-label={`Links for ${project.title}`}>
+        {links.map((link) => (
+          <li><a href={link.href} target="_blank" rel="noreferrer">{link.label} <span aria-hidden="true">↗</span></a></li>
+        ))}
+      </ul>
+    )}
+  </div>
+</article>

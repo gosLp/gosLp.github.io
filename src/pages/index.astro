@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import LatestNews from "../components/LatestNews.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import ResearchItem from "../components/ResearchItem.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ExperienceItem from "../components/ExperienceItem.astro";
+import ResumeCard from "../components/ResumeCard.astro";
+import EmptyState from "../components/EmptyState.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import { site, researchInterests, withBase } from "../data/site";
+import { research } from "../data/research";
+import { projects } from "../data/projects";
+import { experience } from "../data/experience";
+import { resumes } from "../data/resumes";
+import { skills } from "../data/skills";
+import { writing } from "../data/writing";
+
+const featuredResearch = research.filter((entry) => entry.featured);
+const featuredProjects = projects.filter((project) => project.featured).slice(0, 4);
+const populatedSkills = skills.filter((group) => group.items.length > 0);
+---
+
+<BaseLayout>
+  <div class="wrap">
+    <Hero />
+    <LatestNews />
+
+    <section id="about" class="page-section" aria-labelledby="about-title">
+      <SectionHeading eyebrow="01 / About" title="About" />
+      <div class="prose measure">
+        {site.about.map((paragraph) => <p>{paragraph}</p>)}
+        <div class="about-details">
+          {site.currentDetails.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" aria-labelledby="interests-title">
+      <SectionHeading eyebrow="02 / Focus" title="Research interests" />
+      <div class="interest-grid">
+        {researchInterests.map((interest, index) => (
+          <article>
+            <span class="index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{interest.title}</h3>
+            <p>{interest.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="page-section" aria-labelledby="research-title">
+      <SectionHeading
+        eyebrow="03 / Research"
+        title="Selected research"
+        description="Publications and research work are listed only after their details and status have been verified."
+      />
+      {featuredResearch.length > 0 ? (
+        <div class="research-list">{featuredResearch.map((entry) => <ResearchItem entry={entry} />)}</div>
+      ) : (
+        <EmptyState title="Research entries pending" message="No publication claims are shown yet. Add verified work in src/data/research.ts." />
+      )}
+      <p class="section-link"><a href={withBase("/research/")}>View all research <span aria-hidden="true">→</span></a></p>
+    </section>
+
+    <section class="page-section" aria-labelledby="projects-title">
+      <SectionHeading eyebrow="04 / Engineering" title="Selected projects" />
+      {featuredProjects.length > 0 ? (
+        <div class="project-grid">{featuredProjects.map((project) => <ProjectCard project={project} />)}</div>
+      ) : (
+        <EmptyState title="Project details pending" message="Verified technical projects can be added in src/data/projects.ts without changing the page layout." />
+      )}
+      <p class="section-link"><a href={withBase("/projects/")}>View all projects <span aria-hidden="true">→</span></a></p>
+    </section>
+
+    <section class="page-section" aria-labelledby="experience-title">
+      <SectionHeading eyebrow="05 / Background" title="Experience" />
+      {experience.length > 0 ? (
+        <div class="experience-list">{experience.map((entry) => <ExperienceItem entry={entry} />)}</div>
+      ) : (
+        <EmptyState title="Experience history pending" message="Add verified roles, organizations, dates, and descriptions in src/data/experience.ts." />
+      )}
+    </section>
+
+    <section class="page-section" aria-labelledby="skills-title">
+      <SectionHeading eyebrow="06 / Toolchain" title="Technical skills" />
+      {populatedSkills.length > 0 ? (
+        <div class="skills-grid">
+          {populatedSkills.map((group) => (
+            <div>
+              <h3>{group.category}</h3>
+              <p>{group.items.join(" · ")}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="Detailed toolchain pending" message="Skills are intentionally blank until they are copied from a verified resume into src/data/skills.ts." />
+      )}
+    </section>
+
+    <section class="page-section" aria-labelledby="resumes-title">
+      <SectionHeading
+        eyebrow="07 / Documents"
+        title="Resumes"
+        description="Different versions for academic, research, and engineering contexts."
+      />
+      <div class="resume-grid">
+        {resumes.map((resume) => <ResumeCard resume={resume} compact />)}
+      </div>
+      <p class="section-link"><a href={withBase("/resumes/")}>Compare all resumes <span aria-hidden="true">→</span></a></p>
+    </section>
+
+    <section class="page-section split-section" aria-labelledby="writing-title">
+      <div>
+        <SectionHeading eyebrow="08 / Notes" title="Writing" />
+        <p class="measure">I occasionally write about GPU systems, parallel programming, compilers, and other technical topics on a separate technology blog.</p>
+        {site.profiles.blog ? (
+          <p class="section-link"><a href={site.profiles.blog} target="_blank" rel="noreferrer">Visit my technical blog <span aria-hidden="true">↗</span></a></p>
+        ) : (
+          <p class="todo-note">TODO: Add the external blog URL in src/data/site.ts.</p>
+        )}
+      </div>
+      {writing.length > 0 && (
+        <div class="writing-list">
+          {writing.map((post) => (
+            <article>
+              <h3><a href={post.url} target="_blank" rel="noreferrer">{post.title} ↗</a></h3>
+              {post.date && <p class="post-date">{post.date}</p>}
+              <p>{post.description}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <section class="page-section contact-band" aria-labelledby="contact-title">
+      <div>
+        <p class="section-eyebrow">09 / Contact</p>
+        <h2 id="contact-title">Let’s talk systems.</h2>
+        <p>For research conversations, collaboration, and professional inquiries.</p>
+      </div>
+      <div>
+        <SocialLinks includeEmail />
+        {!site.email && <p class="todo-note">TODO: Add email and profile links in src/data/site.ts.</p>}
+        <a class="button" href={withBase("/contact/")}>Contact details <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
